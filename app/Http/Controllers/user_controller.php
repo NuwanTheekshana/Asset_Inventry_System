@@ -43,7 +43,7 @@ class user_controller extends Controller
             );
       
             $postData = json_encode($postData); 
-            $host="http://192.168.10.172:8087/api/ProposalAssign/GetActiveDirectoryDetails";
+            $host="http://192.168.10.54:8087/api/ProposalAssign/GetActiveDirectoryDetails";
             $ch = curl_init($host);
             $username = "MOBILE_APP";
             $password = "SRILANKA";
@@ -169,6 +169,57 @@ class user_controller extends Controller
         $user_data->save();
 
         return redirect()->back()->with('success', 'User Activation successfully..!');
+
+    }
+
+    public function emp_update_details(Request $request)
+    {
+        $added_user = Auth::user()->name;
+        $added_user_epf_no = Auth::user()->epf_no;
+        $added_user_id = Auth::user()->id;
+
+        $id = $request->emp_id;
+        $epf = $request->epfno_val;
+        $full_name = $request->fname;
+        $emp_type = $request->emp_type;
+        $NIC = $request->NIC;
+        $designation = $request->designation;
+        $location = $request->location;
+        $email = $request->email;
+        $company = $request->company;
+        $contact_no = $request->contact_no;
+
+        $update_user = asset_user_tbls::find($id);
+        $user_token = $update_user->user_token;
+        $get_verify_user_id = asset_verify_user_token::where('user_token', $user_token)->value('id');
+        $verify_user = asset_verify_user_token::find($get_verify_user_id);
+        $verify_user->company = $company;
+        $verify_user->nic_no = $NIC;
+        $verify_user->update();
+
+        $update_user->epf_no = $epf;
+        $update_user->emplyee_type = $emp_type;
+        $update_user->nic_no = $NIC;
+        $update_user->full_name = $full_name;
+        $update_user->designation = $designation;
+        $update_user->location = $location;
+        $update_user->email = $email;
+        $update_user->contact_no = $contact_no;
+        $update_user->update();
+
+        $user_data = new user_followup_tbls();
+        $user_data->current_user_token = $user_token;
+        $user_data->current_user_epf = $epf;
+        $user_data->current_user_name = $full_name;
+        $user_data->current_user_company = $company;
+        $user_data->reason = "";
+        $user_data->reason_remark = "";
+        $user_data->followup_update_user_id = $added_user_id;
+        $user_data->followup_update_user_name = $added_user;
+        $user_data->status = "Update";
+        $user_data->save();
+
+        return redirect()->back()->with('success', 'Employee details update successfully..!');
 
     }
 

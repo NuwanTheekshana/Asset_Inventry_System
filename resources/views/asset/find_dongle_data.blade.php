@@ -106,6 +106,32 @@
             </div>
 
 
+            <div class="card mt-3" id="find_common_dongle_card" style="display: none">
+                <div class="card-body">
+            <p>Find Connection Details</p>
+            
+            
+            <table id="find_common_dongle_details_table" class="table table-striped table-bordered" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th width="15%">Connection Type</th>
+                            <th width="15%">Connection No</th>
+                            <th width="20%">SIM No</th>
+                            <th width="15%">IP Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      
+            
+                    </tbody>
+            
+            </table>
+            
+        
+                </div>
+            </div>
+
+
         </div>
     </div>
 </div>
@@ -125,10 +151,11 @@
            url:'{{url("/find_dongle_data_details")}}',
            data:findform,
            success:function(jsonData){
-                console.log(jsonData.data)
-
+            if (jsonData.data.length > 0) {
+                $('#find_common_dongle_card').hide(1000);
+                $('#find_details_card').show(1000);
                 $("#find_dongle_details_table").dataTable().fnDestroy();
-            var myDataTable =  $('#find_dongle_details_table').DataTable({
+                var myDataTable =  $('#find_dongle_details_table').DataTable({
                 data  :  jsonData.data,
                 columns : 
                 [
@@ -156,7 +183,26 @@
 
                 ],
            
-    });
+            });
+
+            }
+            else if(jsonData.data2.length > 0)
+            {
+                    $('#find_details_card').hide(1000);
+                    $('#find_common_dongle_card').show(1000);
+                    $("#find_common_dongle_details_table").dataTable().fnDestroy();
+                    var myDataTable =  $('#find_common_dongle_details_table').DataTable({
+                    data  :  jsonData.data2,
+                    columns : 
+                    [
+                    { data : "dongle_connection_type" },  
+                    { data : "dongle_connection_no" },
+                    { data : "dongle_sim_no" },
+                    { data : "dongle_ip_address" },
+                    ],
+                });
+            }
+            //
 
           }
           

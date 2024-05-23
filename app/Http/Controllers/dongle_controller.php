@@ -11,6 +11,7 @@ use App\Models\asset_followup_tbl;
 use App\Models\asset_unallocated_tbl;
 use App\Models\asset_dongle_followup_tbl;
 use App\Models\asset_dongle_unallocated_tbl;
+use App\Models\common_connection_details_tbl;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ListExport2;
 use Auth;
@@ -39,23 +40,25 @@ class dongle_controller extends Controller
         $find_asset_status = $request->find_asset_status;
         $find_user = $request->find_user;
 
-        
-
         $query = DB::table('asset_dongle_data_tbls')
         ->select('asset_dongle_data_tbls.*', 'asset_verify_user_tokens.asset_token', 'asset_verify_user_tokens.id', 'asset_verify_user_tokens.user_name', 'asset_verify_user_tokens.company')
         ->join('asset_verify_user_tokens','asset_verify_user_tokens.dongle_token','=','asset_dongle_data_tbls.dongle_token');
+        $query2 = common_connection_details_tbl::where('status', '1');
 
         if ($findcon_no != null)
         {
             $query->where('asset_dongle_data_tbls.dongle_connection_no', $findcon_no);
+            $query2->where('dongle_connection_no', $findcon_no);
         }
         if ($find_sim_no != null)
         {
             $query->where('asset_dongle_data_tbls.dongle_sim_no', 'rlike',$find_sim_no);
+            $query2->where('dongle_sim_no', 'rlike', $find_sim_no);
         }
         if ($find_ip_address != null)
         {
             $query->where('asset_dongle_data_tbls.dongle_ip_address', $find_ip_address);
+            $query2->where('dongle_ip_address', $find_ip_address);
         }
         if ($find_imei != null)
         {
@@ -75,14 +78,10 @@ class dongle_controller extends Controller
         }
 
         $data = $query->orderBy('asset_dongle_data_tbls.id','desc')->get();
+        $data2 = $query2->orderBy('id','desc')->get();
 
-        return response()->json(['data' => $data]);
+        return response()->json(['data' => $data, 'data2'=> $data2]);
     }
-
-
-
-
-
 
     public function update_dongle_user_data(Request $request)
     {
@@ -533,7 +532,7 @@ class dongle_controller extends Controller
 
         if ($find_contact_no > 0) 
         {
-            return response()->json(['success' => 'Connection Number has already been taken.']);
+            return response()->json(['error' => 'Connection Number has already been taken.']);
         }
 
 
@@ -542,7 +541,7 @@ class dongle_controller extends Controller
 
         if ($find_sim_no > 0) 
         {
-            return response()->json(['success' => 'SIM Number has already been taken.']);
+            return response()->json(['error' => 'SIM Number has already been taken.']);
         }
 
     // dongle ip address check
@@ -550,7 +549,7 @@ class dongle_controller extends Controller
 
         if ($find_ip_address > 0) 
         {
-            return response()->json(['success' => 'IP Address has already been taken.']);
+            return response()->json(['error' => 'IP Address has already been taken.']);
         }
 
     // dongle IMEI number check
@@ -558,7 +557,7 @@ class dongle_controller extends Controller
 
         if ($find_imei > 0) 
         {
-            return response()->json(['success' => 'IMEI number has already been taken.']);
+            return response()->json(['error' => 'IMEI number has already been taken.']);
         }
 
         $find_user = asset_user_tbls::find($id);

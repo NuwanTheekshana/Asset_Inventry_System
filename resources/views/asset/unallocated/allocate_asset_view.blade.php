@@ -235,7 +235,6 @@
                 return false;
             }
 
-
             if (status) 
             {
                 $.ajax({
@@ -249,6 +248,7 @@
                 {
                     // $.bootstrapGrowl('<b><i> <span class = "glyphicon glyphicon-info-sign"></span>&nbsp;&nbsp;&nbsp;Warning &nbsp;!&nbsp;'+data.success+'</i></b>',
                     // {type: 'success',width: 500,delay: 10000,});$(window).scrollTop(0);
+                    // console.log(data.success);
                     location.href = '{{url("/unallocated_asset")}}';
                 }
        

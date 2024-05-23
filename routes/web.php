@@ -62,6 +62,8 @@ Route::POST('/employee_validation', [App\Http\Controllers\user_controller::class
 Route::POST('/employee_details_validation', [App\Http\Controllers\user_controller::class, 'employee_details_validation'])->name('employee_details_validation');
 Route::POST('/deactivate_user_account', [App\Http\Controllers\user_controller::class, 'deactivate_user_account'])->name('deactivate_user_account');
 Route::POST('/activate_account', [App\Http\Controllers\user_controller::class, 'activate_account'])->name('activate_account');
+Route::POST('emp_update_details', [App\Http\Controllers\user_controller::class, 'emp_update_details'])->name('emp_update_details');
+
 
 // find new emplyee
 Route::POST('/find_emp_details', [App\Http\Controllers\asset_controller::class, 'find_emp_details'])->name('find_emp_details');

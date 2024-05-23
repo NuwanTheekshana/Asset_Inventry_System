@@ -280,7 +280,6 @@
                 return false;
             }
 
-
             if (status) 
             {
                 $.ajax({
@@ -292,10 +291,18 @@
                 data:{user_id:user_id, dongle_id:dongle_id, dongle_type:dongle_type, connection_number:connection_number, sim_number:sim_number, ipaddress:ipaddress, dongle_modal:dongle_modal, dongle_imei:dongle_imei, connection_type:connection_type},
                 success:function(data)
                 {
-                    console.log(data.success);
-                    $.bootstrapGrowl('<b><i> <span class = "glyphicon glyphicon-info-sign"></span>&nbsp;&nbsp;&nbsp;Warning &nbsp;!&nbsp;'+data.success+'</i></b>',
-                    {type: 'success',width: 500,delay: 10000,});$(window).scrollTop(0);
-                    location.href = '{{url("/unallocated_dongle")}}';
+                    if (data.success) {
+                        $.bootstrapGrowl('<b><i> <span class = "glyphicon glyphicon-info-sign"></span>&nbsp;&nbsp;&nbsp;Warning &nbsp;!&nbsp;'+data.success+'</i></b>',
+                        {type: 'success',width: 500,delay: 10000,});$(window).scrollTop(0); 
+
+                        location.href = '{{url("/unallocated_dongle")}}';
+                    }
+                    else
+                    {
+                        $.bootstrapGrowl('<b><i> <span class = "glyphicon glyphicon-info-sign"></span>&nbsp;&nbsp;&nbsp;Warning &nbsp;!&nbsp;'+data.error+'</i></b>',
+                        {type: 'danger',width: 500,delay: 10000,});$(window).scrollTop(0);
+                    }
+
                 }
        
             });

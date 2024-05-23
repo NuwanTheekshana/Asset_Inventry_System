@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\asset_data_tbls;
 use App\Models\asset_dongle_data_tbls;
+use App\Models\asset_dongle_followup_tbl;
 use App\Models\asset_user_tbls;
 use App\Models\asset_verify_user_token;
 use App\Models\asset_followup_tbl;
@@ -30,18 +31,26 @@ class asset_controller extends Controller
         $find_user_token = $find_user_token_data->user_token;
         $find_asset_token = $find_user_token_data->asset_token;
         $find_dongle_token = $find_user_token_data->dongle_token;
+        $company = $find_user_token_data->company;
 
         $asset_user_tbls = asset_user_tbls::where('user_token', $find_user_token)->get()->first();
         $find_asset_details = asset_data_tbls::where('asset_token', $find_asset_token)->whereNotIn('asset_type', ['Pen Drive', 'External Hard Drive'])->where('status', '1')->get();
         $find_asset_other_details = asset_data_tbls::where('asset_token', $find_asset_token)->whereIn('asset_type', ['Pen Drive', 'External Hard Drive'])->where('status', '1')->get();
         $find_dongle_details = asset_dongle_data_tbls::where('dongle_token', $find_dongle_token)->where('status', '1')->get();
 
+        $user_followup = asset_followup_tbl::where('current_user_token', $find_user_token)->get();
+        $dongle_followup = asset_dongle_followup_tbl::where('current_user_token', $find_user_token)->get();
+
+        
         return view('asset.view_find_user_details')
         ->with('token_id', $id)
+        ->with('company', $company)
         ->with('asset_user_tbls', $asset_user_tbls)
         ->with('find_asset_details', $find_asset_details)
         ->with('find_dongle_details', $find_dongle_details)
-        ->with('find_asset_other_details', $find_asset_other_details);
+        ->with('find_asset_other_details', $find_asset_other_details)
+        ->with('user_followup', $user_followup)
+        ->with('dongle_followup', $dongle_followup);
     }
 
     public function find_asset()
@@ -581,19 +590,48 @@ class asset_controller extends Controller
 
             foreach ($asset_type_val as $i => $value) 
             {
-                $asset[] = array(
-                    'asset_token' => $asset_token,
-                    'asset_type' => $asset_type_val[$i],
-                    'asset_no' => $asset_no_val[$i],
-                    'asset_serial_no' => $serial_no_val[$i],
-                    'asset_model' => $dev_modal_val[$i],
-                    'other_asset_model' => "",
-                    'other_asset_capacity' => "",
-                    'asset_validate_status' => $asset_status,
-                );
+                // $asset[] = array(
+                //     'asset_token' => $asset_token,
+                //     'asset_type' => $asset_type_val[$i],
+                //     'asset_no' => $asset_no_val[$i],
+                //     'asset_serial_no' => $serial_no_val[$i],
+                //     'asset_model' => $dev_modal_val[$i],
+                //     'other_asset_model' => "",
+                //     'other_asset_capacity' => "",
+                //     'asset_validate_status' => $asset_status,
+                // );
+
+                $add_asset = new asset_data_tbls();
+                $add_asset->asset_token = $asset_token;
+                $add_asset->asset_type = $asset_type_val[$i];
+                $add_asset->asset_no = $asset_no_val[$i];
+                $add_asset->asset_serial_no = $serial_no_val[$i];
+                $add_asset->asset_model = $dev_modal_val[$i];
+                $add_asset->other_asset_model = "";
+                $add_asset->other_asset_capacity = "";
+                $add_asset->asset_validate_status = $asset_status;
+                $add_asset->save();
+
+                $add_followup = new asset_followup_tbl();
+                $add_followup->current_user_token = $user_token;
+                $add_followup->current_user_epf = $epfno_val;
+                $add_followup->current_user_name = $fullname;
+                $add_followup->current_user_company = $company;
+                $add_followup->asset_type = $asset_type_val[$i];
+                $add_followup->asset_no = $asset_no_val[$i];
+                $add_followup->serial_no = $serial_no_val[$i];
+                $add_followup->other_asset_model = "";
+                $add_followup->other_asset_capacity = "";
+                $add_followup->reason = "";
+                $add_followup->reason_remark = "";
+                $add_followup->followup_update_user_id = $added_user_id;
+                $add_followup->followup_update_user_epf = $added_user_epf_no;
+                $add_followup->followup_update_user_name = $added_user;
+                $add_followup->status = "New";
+                $add_followup->save();
             }
             
-            asset_data_tbls::insert($asset);
+            // asset_data_tbls::insert($asset);
             
             // other assets
             $asset_type_other_val = $request->asset_type_other_val;
@@ -609,19 +647,48 @@ class asset_controller extends Controller
             {
                     foreach ($asset_type_other_val as $i3 => $otherasset) 
                 {
-                    $other_asset[] = array(
-                        'asset_token' => $asset_token,
-                        'asset_type' => $asset_type_other_val[$i3],
-                        'asset_no' => "",
-                        'asset_serial_no' => "",
-                        'asset_model' => "",
-                        'other_asset_model' => $pen_asset_no_val[$i3],
-                        'other_asset_capacity' => $storange_val[$i3],
-                        'asset_validate_status' => $asset_status,
-                    );
+                    // $other_asset[] = array(
+                    //     'asset_token' => $asset_token,
+                    //     'asset_type' => $asset_type_other_val[$i3],
+                    //     'asset_no' => "",
+                    //     'asset_serial_no' => "",
+                    //     'asset_model' => "",
+                    //     'other_asset_model' => $pen_asset_no_val[$i3],
+                    //     'other_asset_capacity' => $storange_val[$i3],
+                    //     'asset_validate_status' => $asset_status,
+                    // );
+
+                    $add_asset = new asset_data_tbls();
+                    $add_asset->asset_token = $asset_token;
+                    $add_asset->asset_type = $asset_type_other_val[$i3];
+                    $add_asset->asset_no = "";
+                    $add_asset->asset_serial_no = "";
+                    $add_asset->asset_model = "";
+                    $add_asset->other_asset_model = $pen_asset_no_val[$i3];
+                    $add_asset->other_asset_capacity = $storange_val[$i3];
+                    $add_asset->asset_validate_status = $asset_status;
+                    $add_asset->save();
+
+                    $add_followup = new asset_followup_tbl();
+                    $add_followup->current_user_token = $user_token;
+                    $add_followup->current_user_epf = $epfno_val;
+                    $add_followup->current_user_name = $fullname;
+                    $add_followup->current_user_company = $company;
+                    $add_followup->asset_type = $asset_type_other_val[$i3];
+                    $add_followup->asset_no = "";
+                    $add_followup->serial_no = "";
+                    $add_followup->other_asset_model = $pen_asset_no_val[$i3];
+                    $add_followup->other_asset_capacity = $storange_val[$i3];
+                    $add_followup->reason = "";
+                    $add_followup->reason_remark = "";
+                    $add_followup->followup_update_user_id = $added_user_id;
+                    $add_followup->followup_update_user_epf = $added_user_epf_no;
+                    $add_followup->followup_update_user_name = $added_user;
+                    $add_followup->status = "New";
+                    $add_followup->save();
                 }
 
-                asset_data_tbls::insert($other_asset);
+                // asset_data_tbls::insert($other_asset);
                 }
             }
 
@@ -651,19 +718,47 @@ class asset_controller extends Controller
 
             foreach ($don_asset_type_val as $i2 => $a_type) 
             {
-                $dongle[] = array(
-                    'dongle_token' => $dongle_token,
-                    'dongle_asset_type' => $don_asset_type_val[$i2],
-                    'dongle_connection_type' => $don_con_type_val[$i2],
-                    'dongle_connection_no' => $don_con_number_val[$i2],
-                    'dongle_sim_no' => $don_sim_number_val[$i2],
-                    'dongle_ip_address' => $don_ip_val[$i2],
-                    'dongle_modal' => $don_modal_val[$i2],
-                    'dongle_imei_no' => $don_imei_val[$i2],
-                );
+                // $dongle[] = array(
+                //     'dongle_token' => $dongle_token,
+                //     'dongle_asset_type' => $don_asset_type_val[$i2],
+                //     'dongle_connection_type' => $don_con_type_val[$i2],
+                //     'dongle_connection_no' => $don_con_number_val[$i2],
+                //     'dongle_sim_no' => $don_sim_number_val[$i2],
+                //     'dongle_ip_address' => $don_ip_val[$i2],
+                //     'dongle_modal' => $don_modal_val[$i2],
+                //     'dongle_imei_no' => $don_imei_val[$i2],
+                // );
+
+                $add_dongle = new asset_dongle_data_tbls();
+                $add_dongle->dongle_token = $dongle_token;
+                $add_dongle->dongle_asset_type = $don_asset_type_val[$i2];
+                $add_dongle->dongle_connection_type = $don_con_type_val[$i2];
+                $add_dongle->dongle_connection_no = $don_con_number_val[$i2];
+                $add_dongle->dongle_sim_no = $don_sim_number_val[$i2];
+                $add_dongle->dongle_ip_address = $don_ip_val[$i2];
+                $add_dongle->dongle_modal = $don_modal_val[$i2];
+                $add_dongle->dongle_imei_no = $don_imei_val[$i2];
+                $add_dongle->save();
+
+
+                $add_followup = new asset_dongle_followup_tbl();
+                $add_followup->current_user_token = $user_token;
+                $add_followup->current_user_epf = $epfno_val;
+                $add_followup->current_user_name = $fullname;
+                $add_followup->current_user_company = $company;
+                $add_followup->connection_number = $don_con_type_val[$i2];
+                $add_followup->sim_number = $don_sim_number_val[$i2];
+                $add_followup->ip_address = $don_ip_val[$i2];
+                $add_followup->dongle_imei_no = $don_imei_val[$i2];
+                $add_followup->reason = "";
+                $add_followup->reason_remark = "";
+                $add_followup->followup_update_user_id = $added_user_id;
+                $add_followup->followup_update_user_name = $added_user;
+                $add_followup->status = "New";
+                $add_followup->save();
             }
             
-            asset_dongle_data_tbls::insert($dongle);
+            // asset_dongle_data_tbls::insert($dongle);
             
         }
         elseif ($dongle_status == "0") 

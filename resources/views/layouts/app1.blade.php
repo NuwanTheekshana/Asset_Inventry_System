@@ -23,7 +23,19 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/style1.css') }}" rel="stylesheet">
 </head>
+
+<style>
+    body
+    {
+        background-image: url('img/hnba.jpg');
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+</style>
+
+
 <body>
     <div id="app">
 

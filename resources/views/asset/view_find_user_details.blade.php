@@ -11,6 +11,7 @@
                     @else
                     <button class="btn btn-danger btn-sm pull-right" style="background-color: red" id="deactivate_btn"><i class="fa fa-times-circle"></i>&nbsp;Deactivate account</button>
                     @endif
+                    <button class="btn btn-warnning btn-sm mr-3 pull-right" style="background-color: orange" id="activate_btn" data-toggle="modal" data-target="#followup_modal{{$token_id}}"><i class="fa fa-info"></i>&nbsp;Followup user</button>
                     <button class="btn btn-success btn-sm mr-3 pull-right" style="background-color: green" id="edit_account_btn" data-toggle="modal" data-target="#edit_account_modal{{$token_id}}"><i class="fa fa-edit"></i>&nbsp;Edit user details</button>
                 </div>
 
@@ -695,8 +696,7 @@
 <input type="hidden" name="dongle_count" id="dongle_count" value="{{count($find_dongle_details)}}">
 
 @include('asset.modals.asset_add_modal')
-
-
+@include('asset.modals.user_modal')
 
 <script>
     $('#deactivate_btn').click(function () 
