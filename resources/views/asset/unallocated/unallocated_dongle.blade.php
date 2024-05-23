@@ -5,7 +5,9 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header">{{ __('Add Dongle Details') }}</div>
+                <div class="card-header">{{ __('Add Dongle Details') }}
+                  <button type="button" class="btn btn-success btn-sm pull-right" style="background-color: green" data-toggle="modal" data-target="#bulk_dongle_model">Bulk Dongle Upload</button>
+                </div>
 
                 <div class="card-body">
                     
@@ -130,6 +132,47 @@
 
         </div>
     </div>
+</div>
+
+
+
+<!--Bulk Dongle Upload Modal -->
+<div id="bulk_dongle_model" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+          <h4 class="modal-title">Dongle Bulk Upload</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        
+      </div>
+      <div class="modal-body">
+       
+        <form action="{{route('bulk_dongle_upload')}}" method="POST" enctype="multipart/form-data">
+          @csrf
+
+          <div class="form-group row">
+              <label for="upload_file" class="col-sm-4 col-form-label">Upload File</label>
+              <div class="col-sm-6">
+                <input type="file" class="form-control" id="upload_file" name="upload_file" accept=".csv, text/csv">
+              </div>
+              <div class="col-sm-2">
+                <a href="{{route('download_dongle_csv_demo')}}">
+                  <button type="button" id="csv_download" class="btn btn-success btn-sm mt-2" title="Download CSV file"><i class="fa fa-download"></i></button>
+                </a>
+              </div>
+          </div>
+
+          <button type="submit" class="btn btn-warning pull-right" style="background-color: orange"><i class="fa fa-upload"></i>&nbsp;    Upload Bulk List</button>
+      </form>
+
+
+      </div>
+
+    </div>
+
+  </div>
 </div>
 
 

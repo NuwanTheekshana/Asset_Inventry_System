@@ -52,6 +52,8 @@ Route::get('/find_dongle_data', [App\Http\Controllers\dongle_controller::class, 
 Route::POST('/find_dongle_data_details', [App\Http\Controllers\dongle_controller::class, 'find_dongle_data_details'])->name('find_dongle_data_details');
 Route::get('/unallocated_dongle', [App\Http\Controllers\dongle_controller::class, 'unallocated_dongle'])->name('unallocated_dongle');
 Route::POST('/add_unallocated_dongle_data', [App\Http\Controllers\dongle_controller::class, 'add_unallocated_dongle_data'])->name('add_unallocated_dongle_data');
+Route::get('/download_dongle_csv_demo', [App\Http\Controllers\dongle_controller::class, 'download_dongle_csv_demo'])->name('download_dongle_csv_demo');
+Route::POST('/bulk_dongle_upload', [App\Http\Controllers\dongle_controller::class, 'bulk_dongle_upload'])->name('bulk_dongle_upload');
 Route::get('/allocate_dongle/{id}', [App\Http\Controllers\dongle_controller::class, 'allocate_dongle'])->name('allocate_dongle');
 Route::POST('/allcate_dongle_user', [App\Http\Controllers\dongle_controller::class, 'allcate_dongle_user'])->name('allcate_dongle_user');
 

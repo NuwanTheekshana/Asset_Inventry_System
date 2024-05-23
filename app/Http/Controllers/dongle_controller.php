@@ -497,6 +497,62 @@ class dongle_controller extends Controller
         return redirect()->back()->with('success', 'Insert dongle details successfully..!');
     }
 
+    public function bulk_dongle_upload(Request $request)
+    {
+        $path = $request->file('upload_file');
+        $added_user = Auth::user()->name;
+        $added_user_epf_no = Auth::user()->epf_no;
+        $added_user_id = Auth::user()->id;
+        $datetime = date('Y-m-d H:i:s');
+
+        $this->validate($request, [
+            'upload_file'  => 'required|mimes:csv,txt',
+           ]);
+
+        $path = $path->getRealPath();
+
+        $maindb = fopen($path, 'r');
+        $count = 0;
+        if ($maindb) {
+        while (($lossline = fgets($maindb)) != false) {
+        
+            if ($count>0) {
+                   //process the dataline read.
+            $datalineSplit = explode(",", $lossline);
+            $dongle_data = array(
+                'asset_type' => trim($datalineSplit[0]),
+                'connection_number' => trim($datalineSplit[1]),
+                'sim_no' => trim($datalineSplit[2]),
+                'ipaddress' => trim($datalineSplit[3]),
+                'connection_type' => trim($datalineSplit[4]),
+                'dongle_modal' => trim($datalineSplit[5]),
+                'dongle_imei' => trim($datalineSplit[6]),
+                'dongle_condition' => trim($datalineSplit[7]),
+                'resposible_user_id' => $added_user_id,
+                'resposible_user_epf' => $added_user_epf_no,
+                'resposible_user_name' => $added_user,
+                'created_at' => $datetime,
+                'updated_at' => $datetime
+            );
+            // print '<pre>';
+            // print_r($datalineSplit);
+            // print '</pre>';
+            asset_dongle_unallocated_tbl::insert($dongle_data);
+            }
+            $count++;
+        }
+        
+    }
+
+    return redirect()->back()->with('success', 'Dongle details upload successfully..!');
+    }
+
+    public function download_dongle_csv_demo()
+    {
+        $filepath= public_path()."/bulk_csv/Dongle_bulk_upload.zip";
+        return response()->download($filepath, 'Dongle_bulk_upload_demo.zip');
+    }
+
     public function dongle_report()
     {
         return Excel::download(new ListExport2, 'dongle_report.xlsx');
