@@ -78,7 +78,7 @@
               
                     <center>
                         <h4>
-                            <b>Monthly Asset Summery - Nuwan</b>
+                            <b>Monthly Asset Summery</b>
                         </h4>
                     </center>
 
