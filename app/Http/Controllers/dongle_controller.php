@@ -514,20 +514,20 @@ class dongle_controller extends Controller
         $maindb = fopen($path, 'r');
         $count = 0;
         if ($maindb) {
-        while (($lossline = fgets($maindb)) != false) {
+        while (($dataline = fgets($maindb)) != false) {
         
             if ($count>0) {
                    //process the dataline read.
-            $datalineSplit = explode(",", $lossline);
+            $datalineSplit = explode(",", $dataline);
             $dongle_data = array(
-                'asset_type' => trim($datalineSplit[0]),
+                'asset_type' => ucwords(trim($datalineSplit[0])),
                 'connection_number' => trim($datalineSplit[1]),
                 'sim_no' => trim($datalineSplit[2]),
                 'ipaddress' => trim($datalineSplit[3]),
                 'connection_type' => trim($datalineSplit[4]),
                 'dongle_modal' => trim($datalineSplit[5]),
                 'dongle_imei' => trim($datalineSplit[6]),
-                'dongle_condition' => trim($datalineSplit[7]),
+                'dongle_condition' => ucwords(trim($datalineSplit[7])),
                 'resposible_user_id' => $added_user_id,
                 'resposible_user_epf' => $added_user_epf_no,
                 'resposible_user_name' => $added_user,

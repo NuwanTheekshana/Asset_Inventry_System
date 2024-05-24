@@ -222,6 +222,7 @@ class asset_controller extends Controller
         return redirect()->back()->with('success', 'Other asset details update successfully..!');
     }
 
+
     public function return_asset(Request $request)
     {
         $id = $request->asset_return_id;
@@ -908,6 +909,61 @@ class asset_controller extends Controller
 
         return redirect()->back()->with('success', 'Insert asset details successfully..!');
 
+    }
+    
+    public function bulk_asset_upload(Request $request)
+    {
+        $path = $request->file('upload_file');
+        $added_user = Auth::user()->name;
+        $added_user_epf_no = Auth::user()->epf_no;
+        $added_user_id = Auth::user()->id;
+        $datetime = date('Y-m-d H:i:s');
+
+        $this->validate($request, [
+            'upload_file'  => 'required|mimes:csv,txt',
+           ]);
+
+        $path = $path->getRealPath();
+
+        $maindb = fopen($path, 'r');
+        $count = 0;
+        if ($maindb) {
+        while (($dataline = fgets($maindb)) != false) {
+        
+            if ($count>0) {
+                   //process the dataline read.
+            $datalineSplit = explode(",", $dataline);
+            $asset_data = array(
+                'asset_type' => ucwords(trim($datalineSplit[0])),
+                'asset_no' => trim($datalineSplit[1]),
+                'serial_no' => trim($datalineSplit[2]),
+                'asset_model' => trim($datalineSplit[3]),
+                'other_asset_model' => trim($datalineSplit[4]),
+                'other_asset_capacity' => trim($datalineSplit[5]),
+                'resposible_user_id' => $added_user_id,
+                'resposible_user_epf' => $added_user_epf_no,
+                'resposible_user_name' => $added_user,
+                'asset_condition' => ucwords(trim($datalineSplit[6])),
+                'created_at' => $datetime,
+                'updated_at' => $datetime
+            );
+            // print '<pre>';
+            // print_r($datalineSplit);
+            // print '</pre>';
+            asset_unallocated_tbl::insert($asset_data);
+            }
+            $count++;
+        }
+        
+    }
+
+    return redirect()->back()->with('success', 'Asset details upload successfully..!');
+    }
+
+    public function download_asset_csv_demo()
+    {
+        $filepath= public_path()."/bulk_csv/Asset_bulk_upload.zip";
+        return response()->download($filepath, 'Asset_bulk_upload_demo.zip');
     }
 
     public function asset_report()

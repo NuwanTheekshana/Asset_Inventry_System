@@ -35,6 +35,8 @@ Route::POST('/return_other_asset', [App\Http\Controllers\asset_controller::class
 Route::POST('/add_asset_data', [App\Http\Controllers\asset_controller::class, 'add_asset_data'])->name('add_asset_data');
 Route::POST('/add_other_asset_data', [App\Http\Controllers\asset_controller::class, 'add_other_asset_data'])->name('add_other_asset_data');
 Route::POST('/insert_new_asset_data', [App\Http\Controllers\asset_controller::class, 'insert_new_asset_data'])->name('insert_new_asset_data');
+Route::POST('/bulk_asset_upload', [App\Http\Controllers\asset_controller::class, 'bulk_asset_upload'])->name('bulk_asset_upload');
+Route::get('/download_asset_csv_demo', [App\Http\Controllers\asset_controller::class, 'download_asset_csv_demo'])->name('download_asset_csv_demo');
 Route::get('/find_asset', [App\Http\Controllers\asset_controller::class, 'find_asset'])->name('find_asset');
 Route::POST('/find_asset_data_details', [App\Http\Controllers\asset_controller::class, 'find_asset_data_details'])->name('find_asset_data_details');
 Route::get('/unallocated_asset', [App\Http\Controllers\asset_controller::class, 'unallocated_asset'])->name('unallocated_asset');
