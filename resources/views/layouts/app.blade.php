@@ -80,6 +80,9 @@
                                 <a class="dropdown-item" href="{{route('unallocated_dongle')}}">
                                     {{ __('Add Unallocated dongle') }}
                                 </a>
+                                <a class="dropdown-item" href="{{route('unallocated_peripherals')}}">
+                                    {{ __('Add Unallocated Peripherals') }}
+                                </a>
                               
                             </div>
                         </li>

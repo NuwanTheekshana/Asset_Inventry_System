@@ -59,6 +59,12 @@ Route::POST('/bulk_dongle_upload', [App\Http\Controllers\dongle_controller::clas
 Route::get('/allocate_dongle/{id}', [App\Http\Controllers\dongle_controller::class, 'allocate_dongle'])->name('allocate_dongle');
 Route::POST('/allcate_dongle_user', [App\Http\Controllers\dongle_controller::class, 'allcate_dongle_user'])->name('allcate_dongle_user');
 
+//peripherals
+Route::get('/unallocated_peripherals', [App\Http\Controllers\peripherals_controller::class, 'unallocated_peripherals'])->name('unallocated_peripherals');
+Route::POST('/add_peripherals_type', [App\Http\Controllers\peripherals_controller::class, 'add_peripherals_type'])->name('add_peripherals_type');
+Route::POST('/add_peripherals', [App\Http\Controllers\peripherals_controller::class, 'add_peripherals'])->name('add_peripherals');
+Route::get('/allocate_peripheral/{id}/{serial_id}', [App\Http\Controllers\peripherals_controller::class, 'allocate_peripheral'])->name('allocate_peripheral');
+Route::POST('/allcate_Peripheral_user', [App\Http\Controllers\peripherals_controller::class, 'allcate_Peripheral_user'])->name('allcate_Peripheral_user');
 
 // new user add
 Route::get('/add_new', [App\Http\Controllers\user_controller::class, 'add_new'])->name('add_new');
